@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Video Hosting Backend API
+=======
+# SocialTube - Video Hosting Backend API
+>>>>>>> 6b09c6335e7f5bd00649448c9dfca0484fcfb494
 
 A production-ready backend system for a YouTube-like video hosting platform built with modern JavaScript technologies and best practices.
 
@@ -6,7 +10,11 @@ A production-ready backend system for a YouTube-like video hosting platform buil
 
 ## 📋 Table of Contents
 
+<<<<<<< HEAD
 - [Overview](#overview)
+=======
+- [Overview](#Overview)
+>>>>>>> 6b09c6335e7f5bd00649448c9dfca0484fcfb494
 - [Tech Stack](#tech-stack)
 - [Features](#features)
 - [Project Structure](#project-structure)
@@ -14,11 +22,19 @@ A production-ready backend system for a YouTube-like video hosting platform buil
 - [API Features](#api-features)
 - [What You'll Learn](#what-youll-learn)
 
+<<<<<<< HEAD
 ## 🎯 Overview
 
 This is a comprehensive backend project demonstrating enterprise-level practices for building scalable APIs. It implements a complete video hosting platform with user authentication, video management, social interaction features, and more.
 
 ## 🛠️ Tech Stack
+=======
+## Overview
+
+This is a comprehensive backend project demonstrating enterprise-level practices for building scalable APIs. It implements a complete video hosting platform with user authentication, video management, social interaction features, and more.
+
+## Tech Stack
+>>>>>>> 6b09c6335e7f5bd00649448c9dfca0484fcfb494
 
 - **Runtime:** Node.js
 - **Framework:** Express.js
@@ -28,7 +44,11 @@ This is a comprehensive backend project demonstrating enterprise-level practices
 - **File Upload:** Cloudinary Integration
 - **Middleware:** Custom auth & multer file handling
 
+<<<<<<< HEAD
 ## ✨ Features
+=======
+##  Features
+>>>>>>> 6b09c6335e7f5bd00649448c9dfca0484fcfb494
 
 ### User Management
 - User registration and login
@@ -55,7 +75,11 @@ This is a comprehensive backend project demonstrating enterprise-level practices
 - Health check endpoints
 - API monitoring capabilities
 
+<<<<<<< HEAD
 ## 📁 Project Structure
+=======
+##  Project Structure
+>>>>>>> 6b09c6335e7f5bd00649448c9dfca0484fcfb494
 
 ```
 src/
@@ -68,7 +92,11 @@ src/
 └── app.js             # Express app configuration
 ```
 
+<<<<<<< HEAD
 ## 🚀 Getting Started
+=======
+## Getting Started
+>>>>>>> 6b09c6335e7f5bd00649448c9dfca0484fcfb494
 
 ### Prerequisites
 - Node.js (v14 or higher)
@@ -88,7 +116,11 @@ npm install
 npm start
 ```
 
+<<<<<<< HEAD
 ## 🔌 API Features
+=======
+##  API Features
+>>>>>>> 6b09c6335e7f5bd00649448c9dfca0484fcfb494
 
 The API includes comprehensive endpoints for:
 - User authentication
@@ -100,7 +132,11 @@ The API includes comprehensive endpoints for:
 - Social tweets
 - Dashboard metrics
 
+<<<<<<< HEAD
 ## 📚 What You'll Learn
+=======
+##  What You'll Learn
+>>>>>>> 6b09c6335e7f5bd00649448c9dfca0484fcfb494
 
 From this project, you'll gain practical knowledge of:
 - Building RESTful APIs with Express.js
