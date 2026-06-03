@@ -1,122 +1,75 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { lazy, Suspense } from 'react'
+import { Routes, Route } from 'react-router-dom'
+import { ROUTES } from '@/constants/routes'
+import MainLayout    from '@/layouts/MainLayout'
+import AuthLayout    from '@/layouts/AuthLayout'
+import ProtectedRoute from '@/routes/ProtectedRoute'
+import GuestRoute    from '@/routes/GuestRoute'
+import Spinner       from '@/components/ui/Spinner'
 
-function App() {
-  const [count, setCount] = useState(0)
+const Home          = lazy(() => import('@/pages/Home'))
+const Watch         = lazy(() => import('@/pages/Watch'))
+const Channel       = lazy(() => import('@/pages/Channel'))
+const Search        = lazy(() => import('@/pages/Search'))
+const Login         = lazy(() => import('@/pages/Auth/Login'))
+const Register      = lazy(() => import('@/pages/Auth/Register'))
+const Upload        = lazy(() => import('@/pages/Upload'))
+const Studio        = lazy(() => import('@/pages/Studio'))
+const Playlists     = lazy(() => import('@/pages/Playlists'))
+const PlaylistDetail= lazy(() => import('@/pages/PlaylistDetail'))
+const LikedVideos   = lazy(() => import('@/pages/LikedVideos'))
+const History       = lazy(() => import('@/pages/History'))
+const Tweets        = lazy(() => import('@/pages/Tweets'))
+const Subscriptions = lazy(() => import('@/pages/Subscriptions'))
+const Settings      = lazy(() => import('@/pages/Settings'))
+const NotFound      = lazy(() => import('@/pages/NotFound'))
 
+function PageLoader() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+    <div className="min-h-screen flex items-center justify-center bg-bg-primary">
+      <Spinner size="lg" />
+    </div>
   )
 }
 
-export default App
+export default function App() {
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
+
+        {/* Guest only — redirect to / if already logged in */}
+        <Route element={<GuestRoute />}>
+          <Route element={<AuthLayout />}>
+            <Route path={ROUTES.LOGIN}    element={<Login />} />
+            <Route path={ROUTES.REGISTER} element={<Register />} />
+          </Route>
+        </Route>
+
+        {/* Public — no auth needed */}
+        <Route element={<MainLayout />}>
+          <Route path={ROUTES.HOME}    element={<Home />} />
+          <Route path={ROUTES.WATCH}   element={<Watch />} />
+          <Route path={ROUTES.CHANNEL} element={<Channel />} />
+          <Route path={ROUTES.SEARCH}  element={<Search />} />
+        </Route>
+
+        {/* Protected — must be logged in */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<MainLayout />}>
+            <Route path={ROUTES.UPLOAD}          element={<Upload />} />
+            <Route path={ROUTES.STUDIO}          element={<Studio />} />
+            <Route path={ROUTES.PLAYLISTS}       element={<Playlists />} />
+            <Route path={ROUTES.PLAYLIST_DETAIL} element={<PlaylistDetail />} />
+            <Route path={ROUTES.LIKED_VIDEOS}    element={<LikedVideos />} />
+            <Route path={ROUTES.HISTORY}         element={<History />} />
+            <Route path={ROUTES.TWEETS}          element={<Tweets />} />
+            <Route path={ROUTES.SUBSCRIPTIONS}   element={<Subscriptions />} />
+            <Route path={ROUTES.SETTINGS}        element={<Settings />} />
+          </Route>
+        </Route>
+
+        <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
+      </Routes>
+    </Suspense>
+  )
+}
