@@ -1,14 +1,45 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* ── Design tokens — Tailwind v4 CSS-first config ── */
+@theme {
+  /* Backgrounds */
+  --color-bg-primary:   #0F0F0F;
+  --color-bg-secondary: #1A1A1A;
+  --color-bg-elevated:  #242424;
 
+  /* Borders */
+  --color-border:       #2E2E2E;
+  --color-border-light: #3A3A3A;
+
+  /* Text */
+  --color-text-primary:   #F1F1F1;
+  --color-text-secondary: #AAAAAA;
+  --color-text-muted:     #717171;
+
+  /* Accent */
+  --color-accent:       #7C3AED;
+  --color-accent-light: #A78BFA;
+  --color-accent-hover: #6D28D9;
+
+  /* Status */
+  --color-success: #22C55E;
+  --color-error:   #EF4444;
+  --color-warning: #F59E0B;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Breakpoints */
+  --breakpoint-xs: 480px;
+}
+
+/* ── Base styles ── */
 @layer base {
   *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    border-color: var(--color-border);
   }
 
   html {
@@ -16,7 +47,11 @@
   }
 
   body {
-    @apply bg-bg-primary text-text-primary font-sans antialiased;
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
     scrollbar-width: thin;
     scrollbar-color: #2E2E2E transparent;
@@ -27,16 +62,17 @@
   ::-webkit-scrollbar-thumb { background-color: #2E2E2E; border-radius: 3px; }
 
   ::selection {
-    @apply bg-accent text-white;
+    background-color: var(--color-accent);
+    color: #fff;
   }
 }
 
-@layer utilities {
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .scrollbar-hide::-webkit-scrollbar {
+/* ── Custom utilities ── */
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
     display: none;
   }
 }
