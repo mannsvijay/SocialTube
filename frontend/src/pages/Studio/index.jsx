@@ -20,6 +20,7 @@ import Button      from '@/components/ui/Button'
 import Input       from '@/components/ui/Input'
 import Textarea    from '@/components/ui/Textarea'
 import Skeleton    from '@/components/ui/Skeleton'
+import ConfirmDialog from '@/components/ui/ConfirmDialog'
 
 /* ── Stats card ─────────────────────────────── */
 function StatCard({ icon: Icon, label, value, color }) {
