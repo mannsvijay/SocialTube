@@ -8,9 +8,11 @@
  */
 export const KEYS = {
   videos: {
-    all:    ()       => ['videos'],
-    list:   (params) => ['videos', 'list', params ?? {}],
-    detail: (id)     => ['videos', 'detail', id],
+    all:      ()       => ['videos'],
+    lists:    ()       => ['videos', 'list'],
+    list:     (params) => ['videos', 'list', params ?? {}],
+    detail:   (id)     => ['videos', 'detail', id],
+    infinite: (params) => ['videos', 'infinite', params ?? {}],  // ← NEW
   },
 
   user: {
