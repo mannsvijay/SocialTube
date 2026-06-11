@@ -115,43 +115,37 @@ function EditVideoModal({ video, isOpen, onClose }) {
 /* ── Single video row ────────────────────────── */
 function VideoRow({ video }) {
   const qc = useQueryClient()
-  const [editOpen, setEditOpen] = useState(false)
-  const [published, setPublished] = useState(video.isPublished)
+  const [editOpen,    setEditOpen]    = useState(false)
+  const [deleteOpen,  setDeleteOpen]  = useState(false)       // ← NEW
+  const [published,   setPublished]   = useState(video.isPublished)
 
-  /* Toggle publish — optimistic */
   const toggleMutation = useMutation({
     mutationFn: () => videoApi.togglePublish(video._id),
     onMutate:   () => setPublished(p => !p),
-    onSuccess:  (data) => setPublished(data.isPublished),
+    onSuccess:  (d) => setPublished(d.isPublished),
     onError:    () => {
-      setPublished(video.isPublished)   // rollback
+      setPublished(video.isPublished)
       toast.error('Failed to update status')
     },
     onSettled: () => qc.invalidateQueries({ queryKey: KEYS.dashboard.videos }),
   })
 
-  /* Delete */
   const deleteMutation = useMutation({
     mutationFn: () => videoApi.remove(video._id),
     onSuccess:  () => {
       qc.invalidateQueries({ queryKey: KEYS.dashboard.videos })
-      qc.invalidateQueries({ queryKey: KEYS.dashboard.stats })
+      qc.invalidateQueries({ queryKey: KEYS.dashboard.stats  })
       toast.success('Video deleted')
+      setDeleteOpen(false)
     },
     onError: () => toast.error('Failed to delete video'),
   })
-
-  const handleDelete = () => {
-    if (!window.confirm(`Delete "${video.title}"? This cannot be undone.`)) return
-    deleteMutation.mutate()
-  }
 
   return (
     <>
       <div className="flex items-center gap-4 p-3 rounded-xl hover:bg-bg-elevated/60
                       transition-colors group border border-transparent hover:border-border">
 
-        {/* Thumbnail */}
         <Link
           to={toWatch(video._id)}
           className="relative w-32 aspect-video rounded-lg overflow-hidden bg-bg-elevated flex-shrink-0"
@@ -164,9 +158,8 @@ function VideoRow({ video }) {
           />
         </Link>
 
-        {/* Info */}
         <div className="flex-1 min-w-0">
-          <Link to={toWatch(video._id)} className="block">
+          <Link to={toWatch(video._id)}>
             <h3 className="text-text-primary text-sm font-medium line-clamp-1
                            hover:text-accent transition-colors">
               {video.title}
@@ -177,23 +170,14 @@ function VideoRow({ video }) {
           </p>
           <div className="flex items-center gap-3 mt-2 flex-wrap">
             <StatusBadge isPublished={published} />
-            <span className="text-text-muted text-xs">
-              {formatViews(video.views)}
-            </span>
-            <span className="text-text-muted text-xs">
-              {video.likesCount ?? 0} likes
-            </span>
-            <span className="text-text-muted text-xs hidden sm:block">
-              {timeAgo(video.createdAt)}
-            </span>
+            <span className="text-text-muted text-xs">{formatViews(video.views)}</span>
+            <span className="text-text-muted text-xs">{video.likesCount ?? 0} likes</span>
+            <span className="text-text-muted text-xs hidden sm:block">{timeAgo(video.createdAt)}</span>
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex items-center gap-1 flex-shrink-0
                         opacity-0 group-hover:opacity-100 transition-opacity">
-
-          {/* Toggle publish */}
           <button
             onClick={() => toggleMutation.mutate()}
             disabled={toggleMutation.isPending}
@@ -207,7 +191,6 @@ function VideoRow({ video }) {
             }
           </button>
 
-          {/* Edit */}
           <button
             onClick={() => setEditOpen(true)}
             title="Edit"
@@ -217,23 +200,29 @@ function VideoRow({ video }) {
             <Pencil size={15} />
           </button>
 
-          {/* Delete */}
           <button
-            onClick={handleDelete}
-            disabled={deleteMutation.isPending}
+            onClick={() => setDeleteOpen(true)}         // ← opens dialog now
             title="Delete"
             className="p-2 rounded-lg text-text-muted hover:text-error
-                       hover:bg-error/10 transition-all disabled:opacity-50"
+                       hover:bg-error/10 transition-all"
           >
             <Trash2 size={15} />
           </button>
         </div>
       </div>
 
-      <EditVideoModal
-        video={video}
-        isOpen={editOpen}
-        onClose={() => setEditOpen(false)}
+      <EditVideoModal video={video} isOpen={editOpen} onClose={() => setEditOpen(false)} />
+
+      {/* ← ConfirmDialog replaces window.confirm */}
+      <ConfirmDialog
+        isOpen={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        onConfirm={() => deleteMutation.mutate()}
+        isLoading={deleteMutation.isPending}
+        title="Delete Video?"
+        description={`"${video.title}" will be permanently deleted. This cannot be undone.`}
+        confirmLabel="Delete Video"
+        variant="danger"
       />
     </>
   )
