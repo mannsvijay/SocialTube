@@ -239,7 +239,6 @@ function VideoRow({ video }) {
   )
 }
 
-/* ── Skeleton for video row ──────────────────── */
 function VideoRowSkeleton() {
   return (
     <div className="flex items-center gap-4 p-3">
