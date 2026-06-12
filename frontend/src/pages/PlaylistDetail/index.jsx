@@ -9,9 +9,9 @@ import { useAuth }     from '@/context/AuthContext'
 import { KEYS }        from '@/constants/query-keys'
 import { toWatch, toChannel, ROUTES } from '@/constants/routes'
 import { formatViews, formatDuration, timeAgo } from '@/utils/formatters'
-import Avatar   from '@/components/ui/Avatar'
-import Button   from '@/components/ui/Button'
-import Skeleton from '@/components/ui/Skeleton'
+import Avatar        from '@/components/ui/Avatar'
+import Button        from '@/components/ui/Button'
+import Skeleton      from '@/components/ui/Skeleton'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 
 /* ── Single video row inside the playlist ─── */
@@ -102,7 +102,10 @@ export default function PlaylistDetail() {
   const { user }       = useAuth()
   const navigate       = useNavigate()
   const qc             = useQueryClient()
-  const [editing, setEditing] = useState(false)
+
+  // ── CHANGE 1: deleteOpen state add kiya ──
+  const [editing,    setEditing]    = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
 
   const { data: playlist, isLoading } = useQuery({
     queryKey: KEYS.playlists.detail(playlistId),
@@ -303,13 +306,12 @@ export default function PlaylistDetail() {
                     >
                       <Pencil size={13} /> Edit
                     </Button>
+
+                    {/* ── CHANGE 2: window.confirm hata ke setDeleteOpen kiya ── */}
                     <Button
                       variant="danger"
                       size="sm"
-                      isLoading={deleteMutation.isPending}
-                      onClick={() => {
-                        if (window.confirm('Delete this playlist?')) deleteMutation.mutate()
-                      }}
+                      onClick={() => setDeleteOpen(true)}
                       className="flex-1 rounded-lg gap-1.5"
                     >
                       <Trash2 size={13} /> Delete
@@ -349,6 +351,18 @@ export default function PlaylistDetail() {
           </div>
         )}
       </div>
+
+      {/* ── CHANGE 3: ConfirmDialog add kiya — page ke end mein ── */}
+      <ConfirmDialog
+        isOpen={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        onConfirm={() => deleteMutation.mutate()}
+        isLoading={deleteMutation.isPending}
+        title="Delete Playlist?"
+        description={`"${playlist?.name}" aur iske saare videos permanently delete ho jaayenge. Yeh action undo nahi ho sakta.`}
+        confirmLabel="Delete Playlist"
+        variant="danger"
+      />
     </div>
   )
 }
