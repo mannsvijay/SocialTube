@@ -4,9 +4,25 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SocialTube</title>
 
-    <!-- Google Fonts — CSS se bahar rakho performance ke liye -->
+    <!-- Primary -->
+    <title>SocialTube — Share &amp; Discover Videos</title>
+    <meta name="description"
+          content="Share your creativity with the world. Discover amazing videos from creators everywhere." />
+    <meta name="theme-color" content="#7C3AED" />
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:title"       content="SocialTube" />
+    <meta property="og:description" content="Share and discover amazing videos" />
+    <meta property="og:image"       content="/og-image.png" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content="SocialTube" />
+    <meta name="twitter:description" content="Share and discover amazing videos" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -15,6 +31,16 @@
     />
   </head>
   <body>
+    <!-- Skip to main content — accessibility -->
+    
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4
+             focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent focus:text-white
+             focus:rounded-full focus:text-sm focus:font-medium"
+    >
+      Skip to content
+    </a>
+
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
