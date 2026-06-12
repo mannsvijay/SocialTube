@@ -12,6 +12,7 @@ import { formatViews, formatDuration, timeAgo } from '@/utils/formatters'
 import Avatar   from '@/components/ui/Avatar'
 import Button   from '@/components/ui/Button'
 import Skeleton from '@/components/ui/Skeleton'
+import ConfirmDialog from '@/components/ui/ConfirmDialog'
 
 /* ── Single video row inside the playlist ─── */
 function VideoRow({ video, index, playlistId, isOwn }) {
