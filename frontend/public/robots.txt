@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /studio
+Disallow: /upload
+Disallow: /settings
+Disallow: /history
+Disallow: /liked-videos
+
+# Replace with your actual domain after deployment
+# Sitemap: https://yourdomain.com/sitemap.xml
