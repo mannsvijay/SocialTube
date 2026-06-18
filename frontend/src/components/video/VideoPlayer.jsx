@@ -1,8 +1,13 @@
-import { useState } from 'react'
-import ReactPlayer  from 'react-player'
-import Spinner      from '@/components/ui/Spinner'
+import { useState }   from 'react'
+import ReactPlayer    from 'react-player'
+import Spinner        from '@/components/ui/Spinner'
 
-export default function VideoPlayer({ url, title }) {
+/**
+ * @param {string}   url      — Cloudinary video URL
+ * @param {string}   title    — shown as accessible title
+ * @param {function} onEnded  — called when video finishes (used for autoplay)
+ */
+export default function VideoPlayer({ url, title, onEnded }) {
   const [ready, setReady] = useState(false)
 
   return (
@@ -12,17 +17,19 @@ export default function VideoPlayer({ url, title }) {
           <Spinner size="lg" />
         </div>
       )}
+
       <ReactPlayer
         url={url}
         width="100%"
         height="100%"
         controls
         onReady={() => setReady(true)}
+        onEnded={onEnded}
         style={{ opacity: ready ? 1 : 0 }}
         config={{
           file: {
             attributes: {
-              title: title || '',
+              title:       title || '',
               controlsList: 'nodownload',
             },
           },
