@@ -21,6 +21,7 @@ import Input       from '@/components/ui/Input'
 import Textarea    from '@/components/ui/Textarea'
 import Skeleton    from '@/components/ui/Skeleton'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 /* ── Stats card ─────────────────────────────── */
 function StatCard({ icon: Icon, label, value, color }) {
@@ -244,6 +245,7 @@ function VideoRowSkeleton() {
 
 /* ── Main Studio page ────────────────────────── */
 export default function Studio() {
+  usePageTitle('Creator Studio')
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: KEYS.dashboard.stats,
     queryFn:  dashboardApi.getStats,
