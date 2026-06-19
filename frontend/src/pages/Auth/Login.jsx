@@ -1,18 +1,20 @@
-import { useForm }          from 'react-hook-form'
-import { zodResolver }      from '@hookform/resolvers/zod'
+import { useForm }           from 'react-hook-form'
+import { zodResolver }       from '@hookform/resolvers/zod'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { toast }            from 'sonner'
-import { loginSchema }      from '@/utils/validators'
-import { useAuth }          from '@/context/AuthContext'
-import { ROUTES }           from '@/constants/routes'
-import Input   from '@/components/ui/Input'
-import Button  from '@/components/ui/Button'
+import { toast }             from 'sonner'
+import { loginSchema }       from '@/utils/validators'
+import { useAuth }           from '@/context/AuthContext'
+import { ROUTES }            from '@/constants/routes'
+import { usePageTitle }      from '@/hooks/usePageTitle'
+import Input  from '@/components/ui/Input'
+import Button from '@/components/ui/Button'
 
 export default function Login() {
   const { login }   = useAuth()
   const navigate    = useNavigate()
   const location    = useLocation()
   const from        = location.state?.from?.pathname || ROUTES.HOME
+  usePageTitle('Log In')
 
   const {
     register,
@@ -22,11 +24,10 @@ export default function Login() {
 
   const onSubmit = async ({ identifier, password }) => {
     try {
-      // identifier can be email or username — send whichever the backend expects
       const isEmail = identifier.includes('@')
       await login(
         isEmail
-          ? { email: identifier, password }
+          ? { email:    identifier, password }
           : { username: identifier, password }
       )
       toast.success('Welcome back!')
@@ -54,7 +55,6 @@ export default function Login() {
           error={errors.identifier?.message}
           {...register('identifier')}
         />
-
         <Input
           type="password"
           label="Password"
@@ -63,7 +63,6 @@ export default function Login() {
           error={errors.password?.message}
           {...register('password')}
         />
-
         <Button
           type="submit"
           isLoading={isSubmitting}
@@ -74,8 +73,11 @@ export default function Login() {
       </form>
 
       <p className="text-center text-sm text-text-muted mt-6">
-        Don't have an account?{' '}
-        <Link to={ROUTES.REGISTER} className="text-accent hover:text-accent-light transition-colors">
+        Don&apos;t have an account?{' '}
+        <Link
+          to={ROUTES.REGISTER}
+          className="text-accent hover:text-accent-light transition-colors"
+        >
           Sign up
         </Link>
       </p>
