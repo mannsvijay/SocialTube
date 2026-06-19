@@ -15,6 +15,9 @@ import Input       from '@/components/ui/Input'
 import Textarea    from '@/components/ui/Textarea'
 import Button      from '@/components/ui/Button'
 import ProgressBar from '@/components/ui/ProgressBar'
+import { usePageTitle } from '@/hooks/usePageTitle'
+
+
 
 /* ── Zod schema ── */
 const metaSchema = z.object({
@@ -116,6 +119,7 @@ function StepIndicator({ current }) {
 
 /* ── Main Upload page ── */
 export default function Upload() {
+  usePageTitle('Upload Video')
   const navigate   = useNavigate()
   const { upload, progress, uploading } = useVideoUpload()
 
