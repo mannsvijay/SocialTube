@@ -5,14 +5,17 @@ import { Send }        from 'lucide-react'
 import { tweetApi }    from '@/api/tweet.api'
 import { useAuth }     from '@/context/AuthContext'
 import { KEYS }        from '@/constants/query-keys'
-import TweetCard       from '@/components/tweet/TweetCard'
-import Avatar          from '@/components/ui/Avatar'
-import Skeleton        from '@/components/ui/Skeleton'
+import { usePageTitle } from '@/hooks/usePageTitle'
+import TweetCard   from '@/components/tweet/TweetCard'
+import Avatar      from '@/components/ui/Avatar'
+import Skeleton    from '@/components/ui/Skeleton'
+import EmptyState  from '@/components/ui/EmptyState'
 
 export default function Tweets() {
-  const { user }  = useAuth()
-  const qc        = useQueryClient()
+  const { user }        = useAuth()
+  const qc              = useQueryClient()
   const [text, setText] = useState('')
+  usePageTitle('Tweets')
 
   const { data: tweets, isLoading } = useQuery({
     queryKey: KEYS.tweets.byUser(user?._id),
@@ -22,7 +25,7 @@ export default function Tweets() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: () => tweetApi.create(text.trim()),
-    onSuccess: () => {
+    onSuccess:  () => {
       setText('')
       qc.invalidateQueries({ queryKey: KEYS.tweets.byUser(user._id) })
       toast.success('Tweet posted!')
@@ -36,7 +39,12 @@ export default function Tweets() {
 
       {/* Compose */}
       <div className="bg-bg-secondary border border-border rounded-xl p-4 mb-6 flex gap-3">
-        <Avatar src={user?.avatar} name={user?.fullName} size="sm" className="flex-shrink-0 mt-1" />
+        <Avatar
+          src={user?.avatar}
+          name={user?.fullName}
+          size="sm"
+          className="flex-shrink-0 mt-1"
+        />
         <div className="flex-1">
           <textarea
             value={text}
@@ -53,8 +61,9 @@ export default function Tweets() {
             <button
               onClick={() => mutate()}
               disabled={isPending || !text.trim() || text.length > 280}
-              className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-accent text-white
-                         text-sm font-medium hover:bg-accent-hover disabled:opacity-50 transition-all"
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-full
+                         bg-accent text-white text-sm font-medium
+                         hover:bg-accent-hover disabled:opacity-50 transition-all"
             >
               <Send size={13} />
               {isPending ? 'Posting...' : 'Tweet'}
@@ -66,13 +75,19 @@ export default function Tweets() {
       {/* Feed */}
       <div className="space-y-4">
         {isLoading
-          ? Array.from({ length: 3 }, (_, i) => <Skeleton key={i} className="h-28 rounded-xl" />)
+          ? Array.from({ length: 3 }, (_, i) => (
+              <Skeleton key={i} className="h-28 rounded-xl" />
+            ))
           : tweets?.length
-            ? tweets.map(t => <TweetCard key={t._id} tweet={t} owner={user} />)
+            ? tweets.map(t => (
+                <TweetCard key={t._id} tweet={t} owner={user} />
+              ))
             : (
-              <div className="text-center py-16">
-                <p className="text-text-muted">No tweets yet — share something!</p>
-              </div>
+              <EmptyState
+                emoji="💬"
+                title="No tweets yet"
+                description="Share something with your followers!"
+              />
             )
         }
       </div>
