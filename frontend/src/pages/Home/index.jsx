@@ -3,6 +3,7 @@ import { useInfiniteQuery }  from '@tanstack/react-query'
 import { videoApi }          from '@/api/video.api'
 import { KEYS }              from '@/constants/query-keys'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
+import { usePageTitle }      from '@/hooks/usePageTitle'
 import VideoGrid             from '@/components/video/VideoGrid'
 import Spinner               from '@/components/ui/Spinner'
 
@@ -10,6 +11,8 @@ const LIMIT  = 12
 const PARAMS = { sortBy: 'createdAt', sortType: 'desc', limit: LIMIT }
 
 export default function Home() {
+  usePageTitle('Home')
+
   const {
     data,
     isLoading,
@@ -19,8 +22,8 @@ export default function Home() {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey:      KEYS.videos.infinite(PARAMS),
-    queryFn:       ({ pageParam }) =>
+    queryKey:        KEYS.videos.infinite(PARAMS),
+    queryFn:         ({ pageParam }) =>
       videoApi.getAll({ ...PARAMS, page: pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
@@ -29,15 +32,12 @@ export default function Home() {
     },
   })
 
-  // Flatten all pages into one array
-  const videos = data?.pages.flatMap(page => page.videos) ?? []
+  const videos = data?.pages.flatMap(p => p.videos) ?? []
 
-  // Stable callback for IntersectionObserver
   const handleFetchNext = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage()
   }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
-  // Attach to sentinel div at the bottom
   const sentinelRef = useInfiniteScroll(handleFetchNext, {
     enabled: hasNextPage && !isFetchingNextPage,
   })
@@ -54,7 +54,8 @@ export default function Home() {
         </div>
         <button
           onClick={() => refetch()}
-          className="text-accent hover:text-accent-light text-sm underline underline-offset-2"
+          className="text-accent hover:text-accent-light text-sm
+                     underline underline-offset-2"
         >
           Try again
         </button>
@@ -70,7 +71,6 @@ export default function Home() {
         skeletonCount={LIMIT}
       />
 
-      {/* ── Infinite scroll sentinel ── */}
       {!isLoading && (
         <div
           ref={sentinelRef}
