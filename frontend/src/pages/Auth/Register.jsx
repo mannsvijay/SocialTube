@@ -1,19 +1,21 @@
-import { useState }     from 'react'
-import { useForm }      from 'react-hook-form'
-import { zodResolver }  from '@hookform/resolvers/zod'
+import { useState }      from 'react'
+import { useForm }       from 'react-hook-form'
+import { zodResolver }   from '@hookform/resolvers/zod'
 import { Link, useNavigate } from 'react-router-dom'
-import { toast }        from 'sonner'
-import { Camera }       from 'lucide-react'
+import { toast }         from 'sonner'
+import { Camera }        from 'lucide-react'
 import { registerSchema } from '@/utils/validators'
-import { authApi }      from '@/api/auth.api'
-import { useAuth }      from '@/context/AuthContext'
-import { ROUTES }       from '@/constants/routes'
+import { authApi }       from '@/api/auth.api'
+import { useAuth }       from '@/context/AuthContext'
+import { ROUTES }        from '@/constants/routes'
+import { usePageTitle }  from '@/hooks/usePageTitle'
 import Input  from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 
 export default function Register() {
-  const { login }  = useAuth()
-  const navigate   = useNavigate()
+  const { login }    = useAuth()
+  const navigate     = useNavigate()
+  usePageTitle('Create Account')
 
   const [avatarFile,    setAvatarFile]    = useState(null)
   const [avatarPreview, setAvatarPreview] = useState(null)
@@ -46,7 +48,6 @@ export default function Register() {
 
     try {
       await authApi.register(form)
-      // Auto login after register
       await login({ username: data.username.toLowerCase(), password: data.password })
       toast.success('Account created! Welcome 🎉')
       navigate(ROUTES.HOME, { replace: true })
@@ -58,17 +59,19 @@ export default function Register() {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-text-primary mb-1">Create account</h2>
+      <h2 className="text-xl font-semibold text-text-primary mb-1">
+        Create account
+      </h2>
       <p className="text-text-muted text-sm mb-6">Join SocialTube today</p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-
-        {/* Avatar upload */}
+        {/* Avatar */}
         <div className="flex flex-col items-center gap-2">
           <label htmlFor="avatar-input" className="cursor-pointer group">
             <div className="w-20 h-20 rounded-full bg-bg-elevated border-2
-                            border-dashed border-border group-hover:border-accent
-                            flex items-center justify-center overflow-hidden transition-colors">
+                            border-dashed border-border overflow-hidden
+                            group-hover:border-accent transition-colors flex
+                            items-center justify-center">
               {avatarPreview
                 ? <img src={avatarPreview} alt="preview" className="w-full h-full object-cover" />
                 : <Camera size={24} className="text-text-muted group-hover:text-accent transition-colors" />
@@ -93,14 +96,12 @@ export default function Register() {
           error={errors.fullName?.message}
           {...register('fullName')}
         />
-
         <Input
           label="Username"
           placeholder="alexj"
           error={errors.username?.message}
           {...register('username')}
         />
-
         <Input
           label="Email"
           type="email"
@@ -109,7 +110,6 @@ export default function Register() {
           error={errors.email?.message}
           {...register('email')}
         />
-
         <Input
           type="password"
           label="Password"
@@ -118,7 +118,6 @@ export default function Register() {
           error={errors.password?.message}
           {...register('password')}
         />
-
         <Input
           type="password"
           label="Confirm Password"
@@ -139,7 +138,10 @@ export default function Register() {
 
       <p className="text-center text-sm text-text-muted mt-6">
         Already have an account?{' '}
-        <Link to={ROUTES.LOGIN} className="text-accent hover:text-accent-light transition-colors">
+        <Link
+          to={ROUTES.LOGIN}
+          className="text-accent hover:text-accent-light transition-colors"
+        >
           Log in
         </Link>
       </p>
