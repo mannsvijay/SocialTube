@@ -1,7 +1,8 @@
-import { useState } from 'react'
-import { cn }       from '@/utils/helpers'
-import ProfileTab   from './ProfileTab'
-import PasswordTab  from './PasswordTab'
+import { useState }     from 'react'
+import { cn }           from '@/utils/helpers'
+import { usePageTitle } from '@/hooks/usePageTitle'
+import ProfileTab  from './ProfileTab'
+import PasswordTab from './PasswordTab'
 
 const TABS = [
   { id: 'profile',  label: 'Profile'  },
@@ -10,6 +11,7 @@ const TABS = [
 
 export default function Settings() {
   const [active, setActive] = useState('profile')
+  usePageTitle('Settings')
 
   return (
     <div className="max-w-2xl mx-auto">
