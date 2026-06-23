@@ -30,7 +30,7 @@ function DropZone({ accept, label, hint, Icon, file, preview, onDrop }) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept,
     maxFiles: 1,
-    onDrop:   (accepted) => { if (accepted[0]) onDrop(accepted[0]) },
+    onDrop:  (accepted) => { if (accepted[0]) onDrop(accepted[0]) },
   })
 
   const hasFile = !!file
