@@ -5,17 +5,16 @@ import { useForm }                from 'react-hook-form'
 import { zodResolver }            from '@hookform/resolvers/zod'
 import { z }                      from 'zod'
 import { toast }                  from 'sonner'
-import {
-  FileVideo, ImageIcon, CheckCircle2,
+import { FileVideo, ImageIcon, CheckCircle2,
   ArrowLeft, UploadCloud,
 } from 'lucide-react'
-import { useVideoUpload }  from '@/hooks/useVideoUpload'
-import { toWatch }         from '@/constants/routes'
-import Input       from '@/components/ui/Input'
-import Textarea    from '@/components/ui/Textarea'
-import Button      from '@/components/ui/Button'
-import ProgressBar from '@/components/ui/ProgressBar'
-import { usePageTitle } from '@/hooks/usePageTitle'
+import { useVideoUpload }         from '@/hooks/useVideoUpload'
+import { toWatch }                from '@/constants/routes'
+import Input                      from '@/components/ui/Input'
+import Textarea                   from '@/components/ui/Textarea'
+import Button                     from '@/components/ui/Button'
+import ProgressBar                from '@/components/ui/ProgressBar'
+import { usePageTitle }           from '@/hooks/usePageTitle'
 
 
 
@@ -209,7 +208,6 @@ export default function Upload() {
               onDrop={handleThumbDrop}
             />
           </div>
-
           <Button
             onClick={() => setStep(2)}
             disabled={!canProceed}

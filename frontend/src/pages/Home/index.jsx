@@ -89,3 +89,5 @@ export default function Home() {
     </div>
   )
 }
+
+// maintain scroll position when navigating back to home page 
