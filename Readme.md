@@ -9,6 +9,13 @@ A full-stack YouTube + Twitter style app: upload and watch videos, like, comment
 
 **Deployment:** backend on Render, frontend on Vercel, database on MongoDB Atlas, media on Cloudinary.
 
+<p align="center">
+  <a href="https://social-tube-manns.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/Live-Demo-success?style=for-the-badge" alt="Live Demo">
+  </a>
+</p>
+
+
 ## Features
 
 - **Accounts** — register with avatar (and optional cover image), log in with username or email, refresh-token sessions, profile / avatar / cover / password settings
