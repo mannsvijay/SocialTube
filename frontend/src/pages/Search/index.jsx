@@ -36,10 +36,14 @@ export default function SearchPage() {
     }
   }, [debounced])           // eslint-disable-line
 
-  // Sync URL → input (when user searches from Navbar)
-  useEffect(() => {
-    setInput(urlQuery)
-  }, [urlQuery])
+  // Sync URL → input (when user searches from Navbar).
+  // Done during render instead of in an effect, and skipped when the URL only reflects
+  // what is already typed (otherwise a trailing space gets trimmed away while typing).
+  const [prevUrlQuery, setPrevUrlQuery] = useState(urlQuery)
+  if (urlQuery !== prevUrlQuery) {
+    setPrevUrlQuery(urlQuery)
+    if (urlQuery !== input.trim()) setInput(urlQuery)
+  }
 
   const currentSort = SORT_OPTIONS[sortIdx]
 

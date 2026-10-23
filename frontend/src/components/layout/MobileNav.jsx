@@ -1,7 +1,7 @@
 import { NavLink }  from 'react-router-dom'
 import { Home, Search, Upload, User } from 'lucide-react'
 import { cn }      from '@/utils/helpers'
-import { useAuth } from '@/context/AuthContext'
+import { useAuth } from '@/hooks/useAuth'
 import { ROUTES, toChannel } from '@/constants/routes'
 
 export default function MobileNav() {

@@ -1,6 +1,6 @@
 import { Link }            from 'react-router-dom'
 import { useQueryClient }  from '@tanstack/react-query'
-import { useAuth }         from '@/context/AuthContext'
+import { useAuth }         from '@/hooks/useAuth'
 import { useSubscription } from '@/hooks/useSubscription'
 import { KEYS }            from '@/constants/query-keys'
 import { ROUTES }          from '@/constants/routes'

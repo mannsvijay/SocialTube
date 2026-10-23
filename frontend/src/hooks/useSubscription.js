@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { toast }       from 'sonner'
 import { subscriptionApi } from '@/api/subscription.api'
-import { useAuth }     from '@/context/AuthContext'
+import { useAuth }     from '@/hooks/useAuth'
 import { KEYS }        from '@/constants/query-keys'
 import { ROUTES }      from '@/constants/routes'
 

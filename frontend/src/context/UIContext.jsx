@@ -1,7 +1,5 @@
-import { createContext, useContext } from 'react'
-import { useLocalStorage }          from '@/hooks/useLocalStorage'
-
-const UIContext = createContext(null)
+import { useLocalStorage } from '@/hooks/useLocalStorage'
+import { UIContext }       from './ui-context'
 
 export function UIProvider({ children }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useLocalStorage(
@@ -16,10 +14,4 @@ export function UIProvider({ children }) {
       {children}
     </UIContext.Provider>
   )
-}
-
-export function useUI() {
-  const ctx = useContext(UIContext)
-  if (!ctx) throw new Error('useUI must be used within UIProvider')
-  return ctx
 }

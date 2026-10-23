@@ -2,7 +2,7 @@ import { useState }    from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { likeApi }     from '@/api/like.api'
-import { useAuth }     from '@/context/AuthContext'
+import { useAuth }     from '@/hooks/useAuth'
 import { ROUTES }      from '@/constants/routes'
 import { toast }       from 'sonner'
 

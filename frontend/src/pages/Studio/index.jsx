@@ -7,7 +7,7 @@ import { toast }      from 'sonner'
 import {
   Eye, Users, ThumbsUp, VideoIcon,
   Pencil, Trash2, ToggleLeft, ToggleRight,
-  UploadCloud, Check, X,
+  UploadCloud,
 } from 'lucide-react'
 import { dashboardApi } from '@/api/dashboard.api'
 import { videoApi }     from '@/api/video.api'

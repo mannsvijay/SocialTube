@@ -1,7 +1,7 @@
 import { useQuery }    from '@tanstack/react-query'
 import { Link }        from 'react-router-dom'
 import { subscriptionApi } from '@/api/subscription.api'
-import { useAuth }     from '@/context/AuthContext'
+import { useAuth }     from '@/hooks/useAuth'
 import { KEYS }        from '@/constants/query-keys'
 import { toChannel }   from '@/constants/routes'
 import { usePageTitle } from '@/hooks/usePageTitle'

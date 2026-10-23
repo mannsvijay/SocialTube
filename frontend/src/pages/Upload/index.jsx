@@ -1,7 +1,7 @@
 import { useState, useCallback }  from 'react'
 import { useNavigate }            from 'react-router-dom'
 import { useDropzone }            from 'react-dropzone'
-import { useForm }                from 'react-hook-form'
+import { useForm, useWatch }      from 'react-hook-form'
 import { zodResolver }            from '@hookform/resolvers/zod'
 import { z }                      from 'zod'
 import { toast }                  from 'sonner'
@@ -130,11 +130,12 @@ export default function Upload() {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors },
   } = useForm({ resolver: zodResolver(metaSchema) })
 
-  const titleValue = watch('title', '')
+  // useWatch instead of watch() so the React Compiler can memoize this component
+  const titleValue = useWatch({ control, name: 'title', defaultValue: '' })
 
   /* ── Thumbnail handler — generate preview ── */
   const handleThumbDrop = useCallback((file) => {

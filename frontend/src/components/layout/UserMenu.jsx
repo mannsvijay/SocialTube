@@ -5,7 +5,7 @@ import {
   Settings, LogOut, ChevronDown,
 } from 'lucide-react'
 import { toast }   from 'sonner'
-import { useAuth } from '@/context/AuthContext'
+import { useAuth } from '@/hooks/useAuth'
 import { ROUTES, toChannel } from '@/constants/routes'
 import { cn }   from '@/utils/helpers'
 import Avatar   from '@/components/ui/Avatar'

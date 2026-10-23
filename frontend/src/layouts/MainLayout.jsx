@@ -1,6 +1,6 @@
 import { Outlet }    from 'react-router-dom'
 import { cn }        from '@/utils/helpers'
-import { useUI }     from '@/context/UIContext'
+import { useUI }     from '@/hooks/useUI'
 import Navbar        from '@/components/layout/Navbar'
 import Sidebar       from '@/components/layout/Sidebar'
 import MobileNav     from '@/components/layout/MobileNav'

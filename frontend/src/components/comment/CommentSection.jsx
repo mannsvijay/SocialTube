@@ -2,7 +2,7 @@ import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-q
 import { Link }        from 'react-router-dom'
 import { toast }       from 'sonner'
 import { commentApi }  from '@/api/comment.api'
-import { useAuth }     from '@/context/AuthContext'
+import { useAuth }     from '@/hooks/useAuth'
 import { KEYS }        from '@/constants/query-keys'
 import { ROUTES }      from '@/constants/routes'
 import Button          from '@/components/ui/Button'

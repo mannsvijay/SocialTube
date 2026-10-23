@@ -1,10 +1,6 @@
-import {
-  createContext, useContext,
-  useState, useEffect, useCallback,
-} from 'react'
-import { authApi } from '@/api/auth.api'
-
-const AuthContext = createContext(null)
+import { useState, useEffect, useCallback } from 'react'
+import { authApi }     from '@/api/auth.api'
+import { AuthContext } from './auth-context'
 
 export function AuthProvider({ children }) {
   const [user, setUser]         = useState(null)
@@ -60,14 +56,4 @@ export function AuthProvider({ children }) {
       {children}
     </AuthContext.Provider>
   )
-}
-
-/**
- * Usage in any component:
- *   const { user, isLoggedIn, login, logout } = useAuth()
- */
-export function useAuth() {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth must be called inside <AuthProvider>')
-  return ctx
 }
