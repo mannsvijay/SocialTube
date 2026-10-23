@@ -1,18 +1,21 @@
-import { forwardRef, useState } from 'react'
+import { forwardRef, useId, useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 import { cn } from '@/utils/helpers'
 
 const Input = forwardRef(function Input(
-  { label, error, type = 'text', className, ...props },
+  { label, error, type = 'text', className, id, ...props },
   ref
 ) {
   const [visible, setVisible] = useState(false)
+  const generatedId = useId()
+  const inputId     = id ?? generatedId
+  const errorId     = `${inputId}-error`
   const isPassword = type === 'password'
 
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label className="text-sm font-medium text-text-secondary">
+        <label htmlFor={inputId} className="text-sm font-medium text-text-secondary">
           {label}
         </label>
       )}
@@ -20,6 +23,9 @@ const Input = forwardRef(function Input(
       <div className="relative">
         <input
           ref={ref}
+          id={inputId}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? errorId : undefined}
           type={isPassword ? (visible ? 'text' : 'password') : type}
           className={cn(
             'w-full rounded-lg bg-bg-elevated border border-border',
@@ -37,6 +43,7 @@ const Input = forwardRef(function Input(
             type="button"
             tabIndex={-1}
             onClick={() => setVisible(v => !v)}
+            aria-label={visible ? 'Hide password' : 'Show password'}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary transition-colors"
           >
             {visible ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -44,7 +51,7 @@ const Input = forwardRef(function Input(
         )}
       </div>
 
-      {error && <p className="text-xs text-error">{error}</p>}
+      {error && <p id={errorId} className="text-xs text-error">{error}</p>}
     </div>
   )
 })

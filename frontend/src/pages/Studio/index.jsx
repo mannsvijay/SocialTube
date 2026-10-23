@@ -179,7 +179,7 @@ function VideoRow({ video }) {
         </div>
 
         <div className="flex items-center gap-1 flex-shrink-0
-                        opacity-0 group-hover:opacity-100 transition-opacity">
+                        opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
           <button
             onClick={() => toggleMutation.mutate()}
             disabled={toggleMutation.isPending}

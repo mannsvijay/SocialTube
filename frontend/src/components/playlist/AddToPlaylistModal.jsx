@@ -123,7 +123,11 @@ export default function AddToPlaylistModal({ isOpen, onClose, videoId }) {
       <CreatePlaylistModal
         isOpen={showCreate}
         onClose={() => setShowCreate(false)}
-        onCreated={() => setShowCreate(false)}
+        onCreated={(created) => {
+          setShowCreate(false)
+          // a playlist created from "Save to playlist" should already contain the video
+          if (created?._id) addMutation.mutate({ id: created._id })
+        }}
       />
     </>
   )

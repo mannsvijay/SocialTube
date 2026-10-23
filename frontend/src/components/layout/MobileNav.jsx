@@ -24,7 +24,7 @@ export default function MobileNav() {
                     flex items-center">
       {items.map(({ icon: Icon, label, to }) => (
         <NavLink
-          key={to}
+          key={label}   // for guests several items point to /login, so `to` is not unique
           to={to}
           className={({ isActive }) =>
             cn(

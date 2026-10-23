@@ -203,8 +203,10 @@ export default function Watch() {
 
       {/* ── Left ── */}
       <div className="min-w-0">
+        {/* keys are per video so these remount (and reset their state) when autoplay switches video;
+            they are siblings, so each needs its own prefix */}
         <VideoPlayer
-          key={video._id}
+          key={`player-${video._id}`}
           url={video.videoFile}
           title={video.title}
           onEnded={handleVideoEnd}
@@ -218,7 +220,7 @@ export default function Watch() {
         />
 
         <VideoActions
-          key={video._id}
+          key={`actions-${video._id}`}
           videoId={video._id}
           initialLiked={video.isLiked}
           likeCount={video.likesCount}
@@ -227,14 +229,14 @@ export default function Watch() {
         {/* ── Channel row ── */}
         {owner && (
           <ChannelRow
-            key={video._id}
+            key={`channel-${video._id}`}
             videoId={video._id}
             owner={owner}
             isOwnVideo={isOwnVideo}
           />
         )}
 
-        <CommentSection key={video._id} videoId={video._id} />
+        <CommentSection key={`comments-${video._id}`} videoId={video._id} />
       </div>
 
       {/* ── Right ── */}
