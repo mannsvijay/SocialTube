@@ -27,20 +27,35 @@ const cleanupRequestFiles = (req) => {
     }
 }
 
+// timeouts and cloudinary server errors are worth one more try, bad files / bad credentials are not
+const isTransientError = (error) => {
+    const code = error?.error?.http_code ?? error?.http_code
+    return code === 499 || code >= 500 || error?.error?.name === "TimeoutError"
+}
+
 const uploadOnCloudinary = async (localFilePath) => {
+    if (!localFilePath) return null;
+
     try {
-        if (!localFilePath) return null;
+        for (let attempt = 1; ; attempt++) {
+            try {
+                // upload the file on cloudinary
+                const response = await cloudinary.uploader.upload(localFilePath, {
+                    resource_type: "auto",
+                    timeout: 10 * 60 * 1000, // the 60s default is too short for a 100MB video on a slow connection
+                })
 
-        // upload the file on cloudinary
-        const response = await cloudinary.uploader.upload(localFilePath, {
-            resource_type: "auto"
-        })
-
-        // file has been successfully uploaded
-        console.log("file has been uploaded successfully", response.secure_url);
-
-        return response;
-
+                // file has been successfully uploaded
+                console.log("file has been uploaded successfully", response.secure_url);
+                return response;
+            } catch (error) {
+                if (attempt < 2 && isTransientError(error)) {
+                    console.warn("cloudinary upload failed, retrying once:", error?.error?.message || error?.message);
+                    continue;
+                }
+                throw error;
+            }
+        }
     } catch (error) {
         // --- THIS IS THE CRITICAL PART ---
         console.error("❌ CLOUDINARY UPLOAD ERROR:", error);
@@ -48,6 +63,21 @@ const uploadOnCloudinary = async (localFilePath) => {
     } finally {
         // the local file is removed on success and on failure
         removeLocalFile(localFilePath);
+    }
+}
+
+// delete temp files older than maxAgeMs. multer can still be writing a file when a request fails
+// (e.g. the other file in the same request was rejected), so the request-level cleanup can miss it
+const sweepTempDir = (dir = "./public/temp", maxAgeMs = 30 * 60 * 1000) => {
+    try {
+        const now = Date.now();
+        for (const name of fs.readdirSync(dir)) {
+            if (name.startsWith(".")) continue; // keep .gitkeep
+            const filePath = `${dir}/${name}`;
+            if (now - fs.statSync(filePath).mtimeMs > maxAgeMs) removeLocalFile(filePath);
+        }
+    } catch (error) {
+        console.error("could not sweep temp folder", error.message);
     }
 }
 
@@ -79,4 +109,4 @@ const deleteFromCloudinary = async (url, resourceType = "image") => {
     }
 }
 
-export { uploadOnCloudinary, deleteFromCloudinary, cleanupRequestFiles }
+export { uploadOnCloudinary, deleteFromCloudinary, cleanupRequestFiles, sweepTempDir }

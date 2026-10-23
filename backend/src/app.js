@@ -2,6 +2,7 @@ import express from "express" // to create an express application and to use its
 import cors from "cors" // to enable cross-origin resource sharing (CORS) which allows our frontend application to make requests to our backend API from a different origin
 import cookieParser from "cookie-parser" // to parse cookies from the incoming requests and to make them available in the req.cookies object which is useful for handling authentication and authorization using cookies
 import { ApiError } from "./utils/apiError.js"
+import { cleanupRequestFiles } from "./utils/cloudinary.js"
 
 const app = express()
 
@@ -83,6 +84,9 @@ app.use((req, res, next) => {
 // global error handler, sends every error as JSON in the same shape as ApiResponse so the frontend can read error.response.data.message
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
+    // remove whatever multer saved before the request failed (wrong file type, auth error after upload, ...)
+    cleanupRequestFiles(req)
+
     let statusCode = err instanceof ApiError ? err.statusCode : (err.statusCode || err.status || 500)
     let message = err.message || "Internal server error"
 

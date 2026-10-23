@@ -2,6 +2,8 @@ import multer from "multer"; // to handle file uploads in our express applicatio
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
+import { ApiError } from "../utils/apiError.js";
+import { cleanupRequestFiles } from "../utils/cloudinary.js";
 
 const TEMP_DIR = "./public/temp"
 
@@ -20,25 +22,53 @@ const storage = multer.diskStorage({
   }
 })
 
-// only images for avatar / cover / thumbnail and only videos for the video file
+// browsers on windows often send .mkv / .avi as application/octet-stream, so also accept them by extension
+const VIDEO_EXTENSIONS = [".mp4", ".webm", ".mov", ".avi", ".mkv"]
+
+// only images for avatar / cover / thumbnail and only videos for the video file.
+// a wrong file is skipped (not an error) so multer finishes writing the other files of the request first,
+// then withFileCheck below removes them all and answers 400. raising an error here left half written
+// temp files behind, because multer was still writing them after the error response was sent
 const fileFilter = (req, file, cb) => {
   const isVideoField = file.fieldname === "videoFile"
-  const expected = isVideoField ? "video/" : "image/"
+  const isValid = isVideoField
+    ? file.mimetype?.startsWith("video/") || VIDEO_EXTENSIONS.includes(path.extname(file.originalname).toLowerCase())
+    : file.mimetype?.startsWith("image/")
 
-  if (file.mimetype?.startsWith(expected)) return cb(null, true)
+  if (isValid) return cb(null, true)
 
-  const error = new multer.MulterError("LIMIT_UNEXPECTED_FILE", file.fieldname)
-  error.message = `${file.fieldname} must be ${isVideoField ? "a video" : "an image"} file`
-  return cb(error)
+  req.fileValidationError = `${file.fieldname} must be ${isVideoField ? "a video" : "an image"} file`
+  return cb(null, false)
 }
 
-export const upload = multer({
+const multerUpload = multer({ 
     storage,
     fileFilter,
     limits: {
       fileSize: 100 * 1024 * 1024, // 100MB, the cloudinary free plan rejects videos above this
     },
  })
+
+// runs a multer middleware, and if the request has to be rejected removes every temp file it saved
+const withFileCheck = (multerMiddleware) => (req, res, next) => {
+  multerMiddleware(req, res, (err) => {
+    if (err) {
+      cleanupRequestFiles(req)
+      return next(err)
+    }
+    if (req.fileValidationError) {
+      cleanupRequestFiles(req)
+      return next(new ApiError(400, req.fileValidationError))
+    }
+    next()
+  })
+}
+
+// same api as multer (upload.single / upload.fields), so the routes do not change
+export const upload = {
+  single: (name) => withFileCheck(multerUpload.single(name)),
+  fields: (fields) => withFileCheck(multerUpload.fields(fields)),
+}
 
  // we just created  this multer middleware to upload file temp on our server before uploading it to cloudinary
 
