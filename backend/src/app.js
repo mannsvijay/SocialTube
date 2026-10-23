@@ -39,6 +39,12 @@ app.use(express.urlencoded({extended : true, limit : "16kb"})) // to parse the i
 app.use(express.static("public"))
 app.use(cookieParser())
 
+// express 5 leaves req.body undefined when a request has no body, default it so `const {x} = req.body` never throws
+app.use((req, res, next) => {
+    req.body ??= {}
+    next()
+})
+
 
 // routes import
 import userRouter from './routes/user.routes.js'
