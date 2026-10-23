@@ -49,7 +49,7 @@ export default function Home() {
         <div>
           <p className="text-text-primary font-medium">Failed to load videos</p>
           <p className="text-text-muted text-sm mt-1">
-            Make sure the backend is running on port 8000.
+            The server may be waking up — give it a few seconds and try again.
           </p>
         </div>
         <button

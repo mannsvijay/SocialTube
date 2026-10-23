@@ -5,8 +5,8 @@ import {
   Upload, ChevronLeft, ChevronRight,
 } from 'lucide-react'
 import { cn }      from '@/utils/helpers'
-import { useAuth } from '@/context/AuthContext'
-import { useUI }   from '@/context/UIContext'
+import { useAuth } from '@/hooks/useAuth'
+import { useUI }   from '@/hooks/useUI'
 import { ROUTES }  from '@/constants/routes'
 import Tooltip     from '@/components/ui/Tooltip'
 
@@ -98,7 +98,7 @@ export default function Sidebar() {
       <div className="mt-auto space-y-1">
         <Divider />
 
-        {bottomLinks.map(link => (
+        {isLoggedIn && bottomLinks.map(link => (
           <SideLink key={link.to} {...link} collapsed={sidebarCollapsed} />
         ))}
 

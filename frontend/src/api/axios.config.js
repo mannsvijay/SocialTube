@@ -3,7 +3,8 @@ import axios from 'axios'
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1',
   withCredentials: true,   // cookies automatically sent with every request
-  timeout: 10_000,
+  // generous because a sleeping Render free instance takes up to ~60s to wake up
+  timeout: 60_000,
   headers: { 'Content-Type': 'application/json' },
 })
 

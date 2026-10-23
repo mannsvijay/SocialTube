@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
-import { Link }                        from 'react-router-dom'
+import { Link, useNavigate }           from 'react-router-dom'
 import { MoreVertical, BookmarkPlus, Link2 } from 'lucide-react'
 import { toast }                       from 'sonner'
-import { toWatch, toChannel }          from '@/constants/routes'
+import { toWatch, toChannel, ROUTES }  from '@/constants/routes'
+import { useAuth }                     from '@/hooks/useAuth'
 import { formatViews, formatDuration, timeAgo } from '@/utils/formatters'
 import { cn }    from '@/utils/helpers'
 import Avatar    from '@/components/ui/Avatar'
@@ -78,7 +79,12 @@ function VideoContextMenu({ videoId, onSave }) {
 
 /* ── Main VideoCard ───────────────────────────────────────── */
 export default function VideoCard({ video, className }) {
+  const { isLoggedIn } = useAuth()
+  const navigate       = useNavigate()
   const [saveOpen, setSaveOpen] = useState(false)
+
+  // saving to a playlist needs an account
+  const handleSave = () => (isLoggedIn ? setSaveOpen(true) : navigate(ROUTES.LOGIN))
 
   if (!video) return null
 
@@ -115,7 +121,7 @@ export default function VideoCard({ video, className }) {
                           transition-opacity duration-200">
             <VideoContextMenu
               videoId={_id}
-              onSave={() => setSaveOpen(true)}
+              onSave={handleSave}
             />
           </div>
         </Link>

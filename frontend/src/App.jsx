@@ -35,7 +35,7 @@ function PageLoader() {
 
 export default function App() {
   return (
-    <ErrorBoundary>                              {/* ← CHANGE 2 — wrap shuru */}
+    <ErrorBoundary>
       <Suspense fallback={<PageLoader />}>
         <Routes>
 
@@ -47,12 +47,13 @@ export default function App() {
             </Route>
           </Route>
 
-          {/* Public — no auth needed */}
+          {/* Public — no auth needed (the matching API routes are public too) */}
           <Route element={<MainLayout />}>
-            <Route path={ROUTES.HOME}    element={<Home />} />
-            <Route path={ROUTES.WATCH}   element={<Watch />} />
-            <Route path={ROUTES.CHANNEL} element={<Channel />} />
-            <Route path={ROUTES.SEARCH}  element={<Search />} />
+            <Route path={ROUTES.HOME}            element={<Home />} />
+            <Route path={ROUTES.WATCH}           element={<Watch />} />
+            <Route path={ROUTES.CHANNEL}         element={<Channel />} />
+            <Route path={ROUTES.SEARCH}          element={<Search />} />
+            <Route path={ROUTES.PLAYLIST_DETAIL} element={<PlaylistDetail />} />
           </Route>
 
           {/* Protected — must be logged in */}
@@ -61,7 +62,6 @@ export default function App() {
               <Route path={ROUTES.UPLOAD}          element={<Upload />} />
               <Route path={ROUTES.STUDIO}          element={<Studio />} />
               <Route path={ROUTES.PLAYLISTS}       element={<Playlists />} />
-              <Route path={ROUTES.PLAYLIST_DETAIL} element={<PlaylistDetail />} />
               <Route path={ROUTES.LIKED_VIDEOS}    element={<LikedVideos />} />
               <Route path={ROUTES.HISTORY}         element={<History />} />
               <Route path={ROUTES.TWEETS}          element={<Tweets />} />
