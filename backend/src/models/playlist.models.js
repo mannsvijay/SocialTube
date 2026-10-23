@@ -7,7 +7,7 @@ const playlistSchema = new Schema ({
       },
       description : {
         type : String,
-        required : true,
+        default : "", // optional, "required" would reject the empty string the create form sends
       },
       videos : [{
           type : Schema.Types.ObjectId,
