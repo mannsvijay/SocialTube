@@ -22,8 +22,16 @@ export default defineConfig({
   build: {
     target:    'es2020',
     sourcemap: false,
-    chunkSizeWarningLimit: 700,
+    // react-player's hls.js / dash.js chunks (~500-800kB) are only downloaded when such a stream plays
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
+      // dashjs (pulled in by react-player, only loaded for DASH streams) triggers a harmless warning
+      // that prints its whole minified source and floods the build log
+      onwarn(warning, warn) {
+        const file = String(warning.id ?? warning.loc?.file ?? '')
+        if (warning.code === 'COMMONJS_VARIABLE_IN_ESM' && file.includes('dashjs')) return
+        warn(warning)
+      },
       output: {
         // Vite 8 (Rolldown) only accepts manualChunks as a function
         manualChunks(id) {

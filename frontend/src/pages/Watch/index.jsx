@@ -1,6 +1,6 @@
 import { useCallback }         from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { useQuery }            from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast }               from 'sonner'
 import { ListVideo }           from 'lucide-react'
 import { videoApi }            from '@/api/video.api'
@@ -94,6 +94,60 @@ function WatchSkeleton() {
   )
 }
 
+/* ── Channel row with subscribe button ──────── */
+function ChannelRow({ videoId, owner, isOwnVideo }) {
+  const qc = useQueryClient()
+  const { subscribed, count: subCount, toggle: toggleSub, isPending: subPending } =
+    useSubscription({
+      channelId:         owner._id,
+      initialSubscribed: owner.isSubscribed ?? false,
+      initialCount:      owner.subscribersCount ?? 0,
+      // patch the cached video instead of refetching it (every fetch counts as a view)
+      onSuccess: ({ subscribed, count }) =>
+        qc.setQueryData(KEYS.videos.detail(videoId), (video) =>
+          video
+            ? { ...video, owner: { ...video.owner, isSubscribed: subscribed, subscribersCount: count } }
+            : video
+        ),
+    })
+
+  return (
+    <div className="flex items-center justify-between mt-5 py-4
+                    border-t border-b border-border gap-3 flex-wrap">
+      <Link
+        to={toChannel(owner.username)}
+        className="flex items-center gap-3 group"
+      >
+        <Avatar src={owner.avatar} name={owner.fullName} size="md" />
+        <div>
+          <p className="text-text-primary text-sm font-medium
+                         group-hover:text-accent transition-colors">
+            {owner.fullName}
+          </p>
+          <p className="text-text-muted text-xs">
+            @{owner.username} · {subCount.toLocaleString()} subscriber{subCount === 1 ? '' : 's'}
+          </p>
+        </div>
+      </Link>
+
+      {!isOwnVideo && (
+        <button
+          onClick={toggleSub}
+          disabled={subPending}
+          className={cn(
+            'px-5 py-2 rounded-full text-sm font-semibold transition-all flex-shrink-0',
+            subscribed
+              ? 'bg-bg-elevated text-text-secondary border border-border hover:text-error hover:border-error'
+              : 'bg-white text-black hover:bg-white/90'
+          )}
+        >
+          {subscribed ? 'Subscribed' : 'Subscribe'}
+        </button>
+      )}
+    </div>
+  )
+}
+
 /* ── Main page ──────────────────────────────────── */
 export default function Watch() {
   const { videoId } = useParams()
@@ -113,13 +167,6 @@ export default function Watch() {
     queryKey: KEYS.videos.list({ limit: 10 }),
     queryFn:  () => videoApi.getAll({ limit: 10 }),
   })
-
-  const { subscribed, count: subCount, toggle: toggleSub, isPending: subPending } =
-    useSubscription({
-      channelId:         video?.owner?._id,
-      initialSubscribed: false,
-      initialCount:      0,
-    })
 
   // Dynamic browser tab title
   usePageTitle(video?.title ?? 'Watch')
@@ -157,6 +204,7 @@ export default function Watch() {
       {/* ── Left ── */}
       <div className="min-w-0">
         <VideoPlayer
+          key={video._id}
           url={video.videoFile}
           title={video.title}
           onEnded={handleVideoEnd}
@@ -169,47 +217,24 @@ export default function Watch() {
           description={video.description}
         />
 
-        <VideoActions videoId={video._id} />
+        <VideoActions
+          key={video._id}
+          videoId={video._id}
+          initialLiked={video.isLiked}
+          likeCount={video.likesCount}
+        />
 
         {/* ── Channel row ── */}
         {owner && (
-          <div className="flex items-center justify-between mt-5 py-4
-                          border-t border-b border-border gap-3 flex-wrap">
-            <Link
-              to={toChannel(owner.username)}
-              className="flex items-center gap-3 group"
-            >
-              <Avatar src={owner.avatar} name={owner.fullName} size="md" />
-              <div>
-                <p className="text-text-primary text-sm font-medium
-                               group-hover:text-accent transition-colors">
-                  {owner.fullName}
-                </p>
-                <p className="text-text-muted text-xs">@{owner.username}</p>
-              </div>
-            </Link>
-
-            {!isOwnVideo && (
-              <button
-                onClick={toggleSub}
-                disabled={subPending}
-                className={cn(
-                  'px-5 py-2 rounded-full text-sm font-semibold transition-all flex-shrink-0',
-                  subscribed
-                    ? 'bg-bg-elevated text-text-secondary border border-border hover:text-error hover:border-error'
-                    : 'bg-white text-black hover:bg-white/90'
-                )}
-              >
-                {subscribed
-                  ? `Subscribed · ${subCount.toLocaleString()}`
-                  : 'Subscribe'
-                }
-              </button>
-            )}
-          </div>
+          <ChannelRow
+            key={video._id}
+            videoId={video._id}
+            owner={owner}
+            isOwnVideo={isOwnVideo}
+          />
         )}
 
-        <CommentSection videoId={video._id} />
+        <CommentSection key={video._id} videoId={video._id} />
       </div>
 
       {/* ── Right ── */}

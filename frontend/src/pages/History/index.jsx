@@ -14,6 +14,7 @@ export default function History() {
   const { data: videos, isLoading } = useQuery({
     queryKey: KEYS.user.history,
     queryFn:  userApi.getWatchHistory,
+    staleTime: 0,   // watching a video changes the history, always refetch when the page opens
   })
 
   return (

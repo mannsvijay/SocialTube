@@ -1,22 +1,32 @@
 import { useState }           from 'react'
 import { useNavigate }        from 'react-router-dom'
+import { useQueryClient }     from '@tanstack/react-query'
 import { ThumbsUp, Bookmark, Share2 } from 'lucide-react'
 import { toast }              from 'sonner'
 import { useVideoLike }       from '@/hooks/useLike'
 import { useAuth }            from '@/context/AuthContext'
 import { ROUTES }             from '@/constants/routes'
+import { KEYS }               from '@/constants/query-keys'
 import { cn }                 from '@/utils/helpers'
 import AddToPlaylistModal     from '@/components/playlist/AddToPlaylistModal'
 
 export default function VideoActions({ videoId, initialLiked = false, likeCount = 0 }) {
   const { isLoggedIn } = useAuth()
   const navigate       = useNavigate()
+  const qc             = useQueryClient()
   const [saveOpen, setSaveOpen] = useState(false)
 
   const { liked, count, toggle, isPending } = useVideoLike({
     id:           videoId,
     initialLiked,
     initialCount: likeCount,
+    onSuccess: ({ liked, count }) => {
+      // patch the cached video instead of refetching it (every fetch counts as a view)
+      qc.setQueryData(KEYS.videos.detail(videoId), (video) =>
+        video ? { ...video, isLiked: liked, likesCount: count } : video
+      )
+      qc.invalidateQueries({ queryKey: KEYS.likes.videos })
+    },
   })
 
   const handleSave = () => {

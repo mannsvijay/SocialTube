@@ -8,7 +8,6 @@ import { tweetApi }     from '@/api/tweet.api'
 import { playlistApi }  from '@/api/playlist.api'
 import { KEYS }         from '@/constants/query-keys'
 import { cn }           from '@/utils/helpers'
-import { timeAgo }      from '@/utils/formatters'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import ChannelHeader    from '@/components/channel/ChannelHeader'
 import VideoGrid        from '@/components/video/VideoGrid'
@@ -77,10 +76,13 @@ function AboutTab({ channel }) {
             <span className="text-text-primary">@{channel.username}</span>
           </div>
 
-          <div className="flex gap-3">
-            <span className="text-text-muted w-24 flex-shrink-0">Email</span>
-            <span className="text-text-primary">{channel.email}</span>
-          </div>
+          {/* the API only sends the email to the channel owner */}
+          {channel.email && (
+            <div className="flex gap-3">
+              <span className="text-text-muted w-24 flex-shrink-0">Email</span>
+              <span className="text-text-primary">{channel.email}</span>
+            </div>
+          )}
 
           {channel.createdAt && (
             <div className="flex gap-3">
@@ -163,7 +165,7 @@ export default function Channel() {
 
   return (
     <div>
-      <ChannelHeader channel={channel} />
+      <ChannelHeader key={channel._id} channel={channel} />
 
       {/* ── Tabs ── */}
       <div className="flex gap-1 border-b border-border mb-6 overflow-x-auto scrollbar-hide">
