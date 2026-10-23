@@ -38,14 +38,32 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
 })
 
 const getLikedVideos = asyncHandler(async (req, res) => {
-    const {page = 1, limit = 10} = req.query
+    const page = Math.max(parseInt(req.query.page) || 1, 1)
+    const limit = Math.min(Math.max(parseInt(req.query.limit) || 50, 1), 100)
     const likes = await Like.aggregate([
         {$match: {likedBy: new mongoose.Types.ObjectId(req.user._id), video: {$exists: true, $ne: null}}},
-        {$lookup: {from: "videos", localField: "video", foreignField: "_id", as: "videoDetails"}},
-        {$unwind: "$videoDetails"},
         {$sort: {createdAt: -1}},
+        {$lookup: {
+            from: "videos",
+            localField: "video",
+            foreignField: "_id",
+            as: "videoDetails",
+            pipeline: [
+                {$match: {isPublished: true}},
+                // the video card needs the owner to show the channel name and avatar
+                {$lookup: {
+                    from: "users",
+                    localField: "owner",
+                    foreignField: "_id",
+                    as: "owner",
+                    pipeline: [{$project: {username: 1, fullName: 1, avatar: 1}}]
+                }},
+                {$unwind: "$owner"}
+            ]
+        }},
+        {$unwind: "$videoDetails"},
         {$skip: (page - 1) * limit},
-        {$limit: parseInt(limit)},
+        {$limit: limit},
         {$project: {videoDetails: 1, _id: 0}}
     ])
     res.status(200).json(new ApiResponse(200, likes, "Liked videos retrieved"))

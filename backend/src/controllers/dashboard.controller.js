@@ -2,7 +2,6 @@ import mongoose from "mongoose"
 import {video as Video} from "../models/video.models.js"
 import {Subscription} from "../models/subscription.models.js"
 import {like as Like} from "../models/like.models.js"
-import {ApiError} from "../utils/apiError.js"
 import {ApiResponse} from "../utils/apiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
 
@@ -18,7 +17,8 @@ const getChannelStats = asyncHandler(async (req, res) => {
         }}
     ])
     
-    const totalLikes = await Like.countDocuments({video: {$in: await Video.find({owner: userId}, "_id").select("_id")}})
+    const videoIds = await Video.find({owner: userId}).distinct("_id")
+    const totalLikes = await Like.countDocuments({video: {$in: videoIds}})
     const totalSubscribers = await Subscription.countDocuments({channel: userId})
     
     res.status(200).json(new ApiResponse(200, {
@@ -30,14 +30,15 @@ const getChannelStats = asyncHandler(async (req, res) => {
 })
 
 const getChannelVideos = asyncHandler(async (req, res) => {
-    const {page = 1, limit = 10} = req.query
+    const page = Math.max(parseInt(req.query.page) || 1, 1)
+    const limit = Math.min(Math.max(parseInt(req.query.limit) || 10, 1), 100)
     const userId = req.user._id
     
     const videos = await Video.aggregate([
         {$match: {owner: new mongoose.Types.ObjectId(userId)}},
         {$sort: {createdAt: -1}},
         {$skip: (page - 1) * limit},
-        {$limit: parseInt(limit)},
+        {$limit: limit},
         {$lookup: {from: "likes", localField: "_id", foreignField: "video", as: "likes"}},
         {$addFields: {likesCount: {$size: "$likes"}}},
         {$project: {likes: 0}}

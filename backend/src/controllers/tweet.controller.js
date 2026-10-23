@@ -1,15 +1,21 @@
-import mongoose, { isValidObjectId } from "mongoose"
+import { isValidObjectId } from "mongoose"
 import {tweet as Tweet} from "../models/tweet.models.js"
-import {user as User} from "../models/user.models.js"
+import {like as Like} from "../models/like.models.js"
 import {ApiError} from "../utils/apiError.js"
 import {ApiResponse} from "../utils/apiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
+
+const MAX_TWEET_LENGTH = 280 // same limit the tweet form shows
 
 const createTweet = asyncHandler(async (req, res) => {
     const { content } = req.body;
 
     if (!content || content.trim() === "") {
         throw new ApiError(400, "Content is required");
+    }
+
+    if (content.trim().length > MAX_TWEET_LENGTH) {
+        throw new ApiError(400, `Tweet cannot be longer than ${MAX_TWEET_LENGTH} characters`);
     }
 
     const newTweet = await Tweet.create({
@@ -50,6 +56,10 @@ const updateTweet = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Content is required");
     }
 
+    if (content.trim().length > MAX_TWEET_LENGTH) {
+        throw new ApiError(400, `Tweet cannot be longer than ${MAX_TWEET_LENGTH} characters`);
+    }
+
     const tweet = await Tweet.findById(tweetId);
 
     if (!tweet) {
@@ -86,6 +96,7 @@ const deleteTweet = asyncHandler(async (req, res) => {
     }
 
     await Tweet.findByIdAndDelete(tweetId);
+    await Like.deleteMany({ tweet: tweetId });
 
     return res
         .status(200)
