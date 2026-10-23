@@ -27,7 +27,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     if (!isValidObjectId(channelId)) throw new ApiError(400, "Invalid channel ID")
     
     const subscribers = await Subscription.aggregate([
-        {$match: {channel: mongoose.Types.ObjectId(channelId)}},
+        {$match: {channel: new mongoose.Types.ObjectId(channelId)}},
         {$lookup: {from: "users", localField: "subscriber", foreignField: "_id", as: "subscriberInfo"}},
         {$unwind: "$subscriberInfo"},
         {$skip: (page - 1) * limit},
@@ -45,7 +45,7 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
     if (!isValidObjectId(subscriberId)) throw new ApiError(400, "Invalid subscriber ID")
     
     const channels = await Subscription.aggregate([
-        {$match: {subscriber: mongoose.Types.ObjectId(subscriberId)}},
+        {$match: {subscriber: new mongoose.Types.ObjectId(subscriberId)}},
         {$lookup: {from: "users", localField: "channel", foreignField: "_id", as: "channelInfo"}},
         {$unwind: "$channelInfo"},
         {$skip: (page - 1) * limit},

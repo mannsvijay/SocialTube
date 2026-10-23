@@ -40,7 +40,7 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
 const getLikedVideos = asyncHandler(async (req, res) => {
     const {page = 1, limit = 10} = req.query
     const likes = await Like.aggregate([
-        {$match: {likedBy: mongoose.Types.ObjectId(req.user._id), video: {$exists: true, $ne: null}}},
+        {$match: {likedBy: new mongoose.Types.ObjectId(req.user._id), video: {$exists: true, $ne: null}}},
         {$lookup: {from: "videos", localField: "video", foreignField: "_id", as: "videoDetails"}},
         {$unwind: "$videoDetails"},
         {$sort: {createdAt: -1}},

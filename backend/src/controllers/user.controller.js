@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { user as User} from "../models/user.models.js"; 
@@ -429,7 +430,7 @@ const getWatchHistory = asyncHandler(async(req,res) =>{
     const user = await User.aggregate([
         {// match the user by id
             $match : {
-                _id : mongoose.Types.ObjectId(req.user?._id)
+                _id : new mongoose.Types.ObjectId(req.user?._id)
 
             }
 

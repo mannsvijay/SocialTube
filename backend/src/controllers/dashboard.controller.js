@@ -10,7 +10,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
     const userId = req.user._id
     
     const stats = await Video.aggregate([
-        {$match: {owner: mongoose.Types.ObjectId(userId)}},
+        {$match: {owner: new mongoose.Types.ObjectId(userId)}},
         {$group: {
             _id: null,
             totalVideos: {$sum: 1},
@@ -34,7 +34,7 @@ const getChannelVideos = asyncHandler(async (req, res) => {
     const userId = req.user._id
     
     const videos = await Video.aggregate([
-        {$match: {owner: mongoose.Types.ObjectId(userId)}},
+        {$match: {owner: new mongoose.Types.ObjectId(userId)}},
         {$sort: {createdAt: -1}},
         {$skip: (page - 1) * limit},
         {$limit: parseInt(limit)},

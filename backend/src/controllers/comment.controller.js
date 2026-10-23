@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import {Comment} from "../models/comment.model.js"
+import {Comment} from "../models/comment.models.js"
 import {video as Video} from "../models/video.models.js"
 import {ApiError} from "../utils/apiError.js"
 import {ApiResponse} from "../utils/apiResponse.js"
@@ -12,7 +12,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(videoId)) throw new ApiError(400, "Invalid video ID")
     
     const comments = await Comment.aggregate([
-        {$match: {video: mongoose.Types.ObjectId(videoId)}},
+        {$match: {video: new mongoose.Types.ObjectId(videoId)}},
         {$lookup: {from: "users", localField: "owner", foreignField: "_id", as: "ownerDetails"}},
         {$unwind: "$ownerDetails"},
         {$sort: {createdAt: -1}},
